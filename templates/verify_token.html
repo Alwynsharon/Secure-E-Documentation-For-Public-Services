@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify Document Token</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #2c3e50;
+      --secondary-blue: #34495e;
+      --accent-blue: #3498db;
+      --text-light: #ecf0f1;
+      --text-dark: #2c3e50;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+
+      /* Status Colors (for messages if needed) */
+      --status-verified: #28a745;
+      --status-pending: #ffc107;
+      --status-rejected: #dc3545;
+      --status-tampered: #fd7e14;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .page-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .main-container {
+      flex-grow: 1;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    .verify-form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 20px;
+    }
+
+    .verify-form label {
+      font-size: 17px;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    input[type="file"],
+    input[type="text"] { /* Added style for text input */
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--text-dark);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 450px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="file"]::-webkit-file-upload-button:hover {
+      background-color: #2980b9;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 30px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px var(--shadow-light);
+    }
+
+    .verification-result {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 500;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--text-light);
+        word-break: break-all;
+    }
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success { background-color: #d4edda; color: #155724; }
+    .flash-messages li.error { background-color: #f8d7da; color: #721c24; }
+    .flash-messages li.info { background-color: #d1ecf1; color: #0c5460; }
+
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      nav {
+        padding: 15px 20px;
+      }
+      .nav-links a {
+        margin-left: 15px;
+        font-size: 15px;
+      }
+      .page-header {
+        padding: 40px 15px 25px;
+      }
+      .page-header h1 {
+        font-size: 36px;
+      }
+      .page-header p {
+        font-size: 17px;
+      }
+      .main-container {
+        padding: 0 15px;
+      }
+      .card {
+        padding: 30px;
+      }
+      .card h3 {
+        font-size: 22px;
+      }
+      .card h3 i {
+        font-size: 26px;
+      }
+      input[type="file"],
+      input[type="text"] { /* Apply max-width for text input too */
+        max-width: 100%;
+      }
+      .btn {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+      .verification-result {
+        font-size: 16px;
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 20px;
+      }
+      .nav-links {
+        display: none;
+      }
+      .page-header h1 {
+        font-size: 30px;
+      }
+      .page-header p {
+        font-size: 15px;
+      }
+      .card {
+        padding: 25px;
+      }
+      .card h3 {
+        font-size: 20px;
+      }
+      .card h3 i {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      <a href="{{ url_for('verifier_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('verify_token') }}" class="active">Verify Document</a>
+      <a href="{{ url_for('verifier_activity_logs') }}">Activity Logs</a> {# Added direct link for logs #}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="page-header">
+    <h1><i class="fas fa-search"></i> Verify Document Authenticity</h1>
+    <p>Upload a document and provide its official digitoken to verify its integrity and authenticity against registered records.</p>
+  </header>
+
+  <main class="main-container">
+    <div class="card">
+      <h3><i class="fas fa-file-upload"></i> Upload Document for Verification</h3>
+      <form action="{{ url_for('verify_token') }}" method="POST" enctype="multipart/form-data" class="verify-form">
+        <label for="file">Select the document to verify:</label>
+        <input type="file" name="file" id="file" required>
+        
+        <label for="digitoken">Enter the Document Digitoken (SHA-256 Hash):</label>
+        <input type="text" name="digitoken" id="digitoken" placeholder="e.g., e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" required>
+        
+        <button type="submit" class="btn"><i class="fas fa-check-double"></i> Verify Document</button>
+      </form>
+      
+      {% if result_message %}
+      <div class="verification-result">
+          {{ result_message | safe }}
+      </div>
+      {% endif %}
+    </div>
+  </main>
+
+</body>
+</html>

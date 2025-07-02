@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document Issued Successfully</title> {# Changed title #}
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"> {# Added Montserrat for consistency #}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> {# Added Font Awesome #}
+  <style>
+    :root {
+      --primary-blue: #2c3e50;
+      --secondary-blue: #34495e;
+      --accent-blue: #3498db;
+      --text-light: #ecf0f1;
+      --text-dark: #2c3e50;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+      --success-green: #28a745;
+      --pending-orange: #ffc107;
+      --danger-red: #dc3545;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow: hidden;
+    }
+
+    .success-container {
+      background: var(--secondary-blue);
+      padding: 50px 70px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px var(--shadow-strong);
+      animation: fadeIn 0.8s ease-out;
+      transform-origin: center;
+      max-width: 500px;
+      width: 90%;
+      color: var(--text-light);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .success-icon {
+      font-size: 80px;
+      color: var(--success-green);
+      margin-bottom: 20px;
+      animation: bounceIn 1s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.1); opacity: 1; }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    h2 {
+      font-family: 'Montserrat', sans-serif; /* Consistent font */
+      font-size: 32px;
+      color: var(--success-green);
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 25px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .token-display {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background-color: rgba(52, 152, 219, 0.1);
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 20px;
+      border: 1px dashed rgba(52, 152, 219, 0.3);
+      word-break: break-all;
+    }
+    
+    .blockchain-tx-display {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 30px;
+        word-break: break-all;
+    }
+
+    .btn-group { /* Added for button grouping */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px; /* Space between buttons */
+    }
+
+    .btn {
+      display: inline-flex; /* Use flex for icon alignment */
+      align-items: center;
+      gap: 8px; /* Space between icon and text */
+      padding: 12px 30px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      text-decoration: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px var(--shadow-light);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .success-container {
+        padding: 40px 30px;
+      }
+      h2 {
+        font-size: 26px;
+      }
+      .success-icon {
+        font-size: 60px;
+      }
+      .token-display {
+        font-size: 20px;
+        padding: 8px 15px;
+      }
+      .blockchain-tx-display {
+          font-size: 14px;
+      }
+      p {
+        font-size: 16px;
+      }
+      .btn {
+        padding: 10px 25px;
+        font-size: 15px;
+      }
+      .btn-group {
+        flex-direction: column; /* Stack buttons vertically on small screens */
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-container">
+    <div class="success-icon"><i class="fas fa-check-circle"></i></div> {# Changed to Font Awesome icon #}
+    <h2>Document Issued Successfully!</h2>
+    <p>The document's hash has been recorded and is now verifiable. Share the token with the recipient.</p> {# Slightly rephrased #}
+    <div class="token-display">Token: <strong>{{ token }}</strong></div>
+    {% if blockchain_tx_id %}
+    <div class="blockchain-tx-display">
+        Blockchain TX ID: <strong><a href="https://sepolia.etherscan.io/tx/{{ blockchain_tx_id }}" target="_blank" style="color: var(--accent-blue); text-decoration: none; word-break: break-all;">{{ blockchain_tx_id }} <i class="fas fa-external-link-alt"></i></a></strong>
+    </div>
+    {% endif %}
+    <div class="btn-group"> {# Added button group #}
+        <a href="{{ url_for('admin_view_documents') }}" class="btn"><i class="fas fa-folder-open"></i> View All Issued Documents</a>
+        <a href="{{ url_for('admin_issue_document') }}" class="btn"><i class="fas fa-plus-circle"></i> Issue Another Document</a> {# Added button #}
+    </div>
+  </div>
+
+</body>
+</html>

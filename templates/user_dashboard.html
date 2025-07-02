@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      /* Consistent Color Palette */
+      --primary-blue: #2c3e50;
+      --secondary-blue: #34495e;
+      --accent-blue: #3498db;
+      --text-light: #ecf0f1;
+      --text-dark: #2c3e50;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+
+      /* Status Colors */
+      --status-verified: #28a745;
+      --status-pending: #ffc107;
+      --status-rejected: #dc3545;
+      --status-tampered: #fd7e14;
+      --status-issued: #6c757d; /* Added for 'Issued' status badge */
+    }
+
+    /* Global Body Styles */
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .dashboard-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    /* Main Content Container */
+    .main-container {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      display: grid;
+      gap: 30px;
+    }
+
+    /* Cards/Sections */
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 30px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px var(--shadow-light);
+    }
+
+    /* Table Styling */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow-strong);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    th, td {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-light);
+    }
+
+    th {
+      background-color: rgba(25, 45, 65, 0.9);
+      font-weight: 600;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .status-badge.verified {
+      background-color: var(--status-verified);
+      color: var(--text-light);
+    }
+
+    .status-badge.pending {
+      background-color: var(--status-pending);
+      color: var(--text-dark);
+    }
+
+    .status-badge.rejected {
+      background-color: var(--status-rejected);
+      color: var(--text-light);
+    }
+    .status-badge.tampered {
+      background-color: var(--status-tampered);
+      color: var(--text-light);
+    }
+    .status-badge.issued { /* Added for 'Issued' status badge */
+      background-color: var(--status-issued);
+      color: var(--text-light);
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success { background-color: #d4edda; color: #155724; }
+    .flash-messages li.error { background-color: #f8d7da; color: #721c24; }
+    .flash-messages li.info { background-color: #d1ecf1; color: #0c5460; }
+    .flash-messages li.warning { background-color: #fff3cd; color: #664d03; }
+
+    /* Buttons inside table cells (btn-action) */
+    .btn-action {
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 5px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      margin: 0 2px; /* Small margin between buttons */
+    }
+    .btn-action.btn-details { background-color: var(--accent-blue); color: var(--text-light); }
+    .btn-action.btn-details:hover { background-color: #2980b9; transform: translateY(-1px); }
+    .btn-action.btn-download { background-color: var(--status-verified); color: var(--text-light); }
+    .btn-action.btn-download:hover { background-color: #218838; transform: translateY(-1px); }
+
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      nav {
+        padding: 15px 20px;
+      }
+      .nav-links a {
+        margin-left: 15px;
+        font-size: 15px;
+      }
+      .dashboard-header {
+        padding: 40px 15px 25px;
+      }
+      .dashboard-header h1 {
+        font-size: 36px;
+      }
+      .dashboard-header p {
+        font-size: 17px;
+      }
+      .main-container {
+        padding: 0 15px;
+      }
+      .card {
+        padding: 30px;
+      }
+      .card h3 {
+        font-size: 22px;
+      }
+      .card h3 i {
+        font-size: 26px;
+      }
+      th, td {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      .status-badge {
+        font-size: 13px;
+        padding: 4px 8px;
+      }
+      .btn-action {
+        margin: 5px 0; /* Stack buttons vertically in action columns */
+        width: auto; /* Adjust width for stacking */
+      }
+      table {
+        font-size: 12px; /* Even smaller font for table on tiny screens */
+      }
+      .btn-action.btn-details, .btn-action.btn-download {
+        display: block; /* Make them stack */
+        width: fit-content; /* Adjust width for stacking */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 20px;
+      }
+      .nav-links {
+        display: none;
+      }
+      .dashboard-header h1 {
+        font-size: 30px;
+      }
+      .dashboard-header p {
+        font-size: 15px;
+      }
+      .card {
+        padding: 25px;
+      }
+      .card h3 {
+        font-size: 20px;
+      }
+      .card h3 i {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      <a href="{{ url_for('user_dashboard') }}" class="active">Dashboard</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="dashboard-header">
+    <h1>Welcome, {{ identifier }}</h1>
+    <p>Your personal E-Portal dashboard to view and manage documents officially issued to you.</p>
+  </header>
+
+  <main class="main-container">
+
+    <div class="card">
+      <h3><i class="fas fa-folder-open"></i> Documents Issued To You</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Filename</th>
+              <th>Token</th>
+              <th>Status</th>
+              <th>Issued At</th>
+              <th>Details</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td>{{ doc[1] }}</td> {# filename #}
+              <td>{{ doc[2][:10] }}...</td> {# token (first 10 chars) #}
+              <td>
+                {% if doc[3] == 'Verified' %}
+                  <span class="status-badge verified">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Pending' %}
+                  <span class="status-badge pending">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Rejected' %}
+                  <span class="status-badge rejected">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Tampered' %}
+                  <span class="status-badge tampered">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Issued' %} {# Handle 'Issued' status #}
+                  <span class="status-badge issued">{{ doc[3] }}</span>
+                {% else %} {# Fallback for any other unexpected statuses #}
+                  <span class="status-badge">{{ doc[3] }}</span>
+                {% endif %}
+              </td>
+              <td>{{ doc[4] }}</td> {# timestamp #}
+              <td>
+                  <a href="{{ url_for('document_details', doc_id=doc[0]) }}" class="btn-action btn-details" title="View Full Details">
+                      <i class="fas fa-info-circle"></i> View
+                  </a>
+              </td>
+              <td>
+                <a href="{{ url_for('download_document', filename=doc[1]) }}" class="btn-action btn-download" title="Download Original File">
+                  <i class="fas fa-download"></i>
+                </a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">No documents have been issued to you yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

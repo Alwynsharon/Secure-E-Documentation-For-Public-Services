@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - E-Portal</title> {# More descriptive title #}
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"> {# Added Montserrat to head for consistency #}
+  <style>
+    /* Consistent Color Palette */
+    :root {
+      --primary-blue: #2c3e50; /* Darker blue for background */
+      --secondary-blue: #34495e; /* Slightly lighter dark blue for cards */
+      --accent-blue: #3498db; /* A vibrant blue for accents */
+      --text-light: #ecf0f1; /* Light text for dark backgrounds */
+      --text-dark: #2c3e50; /* Dark text for light elements */
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+    }
+
+    /* General Styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Welcome Message Styles */
+    .welcome-message {
+      font-family: 'Montserrat', sans-serif; /* Use Montserrat for titles/headers */
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-shadow: 0 4px 8px var(--shadow-strong);
+      margin-bottom: 40px;
+      text-align: center;
+      animation: slideInTop 1s ease-out;
+    }
+
+    @keyframes slideInTop {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Container */
+    .form-container {
+      background: var(--secondary-blue); /* Consistent card background */
+      padding: 50px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      width: 400px;
+      box-shadow: 0 10px 30px var(--shadow-strong);
+      border: 1px solid var(--border-color);
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 30px;
+      font-family: 'Montserrat', sans-serif; /* Consistent font */
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--text-light);
+      text-shadow: 0 2px 4px var(--shadow-strong);
+    }
+
+    /* Input Fields & Select */
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border-color); /* Consistent border */
+      background: rgba(255, 255, 255, 0.9); /* Lighter background for better contrast */
+      font-size: 16px;
+      color: var(--text-dark); /* Darker text color for inputs */
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: #999;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-blue); /* Highlight border on focus */
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3); /* Glow effect with accent color */
+      background: #fff; /* White background on focus */
+    }
+
+    label {
+      font-size: 15px;
+      text-align: left;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 400;
+    }
+
+    /* Button */
+    .btn {
+      background: var(--accent-blue); /* Consistent accent color for button */
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 12px 20px;
+      margin-top: 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+    }
+
+    .btn:hover {
+      background: #2980b9; /* Darker accent blue on hover */
+      color: var(--text-light);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px var(--shadow-light);
+    }
+
+    /* Link to Login */
+    .login-link {
+        margin-top: 20px;
+        font-size: 16px;
+        color: var(--text-light);
+    }
+    .login-link a {
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    .login-link a:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        .welcome-message {
+            font-size: 30px;
+            margin-bottom: 25px;
+        }
+        .form-container {
+            width: 100%;
+            padding: 30px;
+        }
+        h2 {
+            font-size: 24px;
+        }
+        input, select, .btn {
+            padding: 10px 12px;
+            font-size: 15px;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="welcome-message">
+    WELCOME TO E-PORTAL SIGNUP
+  </div>
+
+  <div class="form-container">
+    <h2>E-Portal Sign Up</h2>
+    <form action="/signup" method="POST">
+      <label for="roleSelect">Role</label>
+      <select name="role" id="roleSelect" onchange="toggleFields()" required>
+        <option value="user">User</option>
+        {# Removed Admin and Verifier options for public signup #}
+        {# <option value="verifier">Verifier</option> #}
+        {# <option value="admin">Admin</option> #}
+      </select>
+
+      <div id="aadharField">
+        <label for="aadhar">Aadhaar Number</label>
+        <input type="text" name="aadhar" id="aadhar" placeholder="Enter 12-digit Aadhaar Number" pattern="^\d{12}$" title="Aadhaar must be exactly 12 digits" maxlength="12"> {# Added start/end anchors and max length #}
+      </div>
+
+      <div id="usernameField" style="display: none;">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" placeholder="Choose a Username">
+      </div>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" placeholder="Enter Password" required>
+
+      <input type="submit" value="Sign Up" class="btn">
+    </form>
+    <div class="login-link">
+        Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleFields() {
+      const role = document.getElementById('roleSelect').value;
+      const aadharField = document.getElementById('aadharField');
+      const usernameField = document.getElementById('usernameField');
+      const aadharInput = aadharField.querySelector('input');
+      const usernameInput = usernameField.querySelector('input');
+
+      if (role === 'user') {
+        aadharField.style.display = 'block';
+        usernameField.style.display = 'none';
+        aadharInput.required = true;
+        usernameInput.required = false;
+        usernameInput.value = ''; // Clear username if switching from non-user
+      } else {
+        // This 'else' block will now only be hit if you dynamically add other roles or remove the "user" option.
+        // For a public signup, it's safer to only offer 'user'.
+        // If you were to allow verifier/admin signup later (e.g., via a special link),
+        // this logic would handle it. For now, it won't be triggered by the dropdown.
+        aadharField.style.display = 'none';
+        usernameField.style.display = 'block';
+        aadharInput.required = false;
+        usernameInput.required = true;
+        aadharInput.value = '';
+      }
+    }
+
+    // Call toggleFields on page load to set initial state (which will always be 'user' now)
+    window.onload = toggleFields;
+  </script>
+</body>
+</html>

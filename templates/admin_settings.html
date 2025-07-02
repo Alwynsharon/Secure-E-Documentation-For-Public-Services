@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      /* Consistent Color Palette */
+      --primary-blue: #2c3e50; /* Darker blue for background */
+      --secondary-blue: #34495e; /* Slightly lighter dark blue for cards */
+      --accent-blue: #3498db; /* A vibrant blue for accents */
+      --text-light: #ecf0f1; /* Light text for dark backgrounds */
+      --text-dark: #2c3e50; /* Dark text for light elements */
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .page-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .main-container {
+      flex-grow: 1;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    .settings-content p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 25px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+      text-decoration: none;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success { background-color: #d4edda; color: #155724; }
+    .flash-messages li.error { background-color: #f8d7da; color: #721c24; }
+    .flash-messages li.info { background-color: #d1ecf1; color: #0c5460; }
+
+
+    @media (max-width: 768px) {
+      nav { padding: 15px 20px; }
+      .nav-links a { margin-left: 15px; font-size: 15px; }
+      .page-header { padding: 40px 15px 25px; }
+      .page-header h1 { font-size: 36px; }
+      .page-header p { font-size: 17px; }
+      .main-container { padding: 0 15px; }
+      .card { padding: 30px; }
+      .card h3 { font-size: 22px; }
+      .card h3 i { font-size: 26px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo { font-size: 20px; }
+      .nav-links { display: none; }
+      .page-header h1 { font-size: 30px; }
+      .page-header p { font-size: 15px; }
+      .card { padding: 25px; }
+      .card h3 { font-size: 20px; }
+      .card h3 i { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('admin_issue_document') }}">Issue Document</a>
+      <a href="{{ url_for('admin_view_documents') }}">View Documents</a>
+      <a href="{{ url_for('admin_manage_users') }}">Manage Users</a>
+      <a href="{{ url_for('admin_settings') }}" class="active">Settings</a> {# Set active #}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="page-header">
+    <h1><i class="fas fa-cogs"></i> Admin Settings</h1>
+    <p>Manage portal configurations, security settings, and administrative preferences.</p>
+  </header>
+
+  <main class="main-container">
+    <div class="card">
+      <div class="settings-content">
+        <p>This is where you would configure various settings for the E-Portal.</p>
+        <p>Features like user permissions, system defaults, and integration options could be managed here.</p>
+        <p>Currently, this page serves as a placeholder for future functionality.</p>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

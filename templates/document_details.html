@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #2c3e50;
+      --secondary-blue: #34495e;
+      --accent-blue: #3498db;
+      --text-light: #ecf0f1;
+      --text-dark: #2c3e50;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+
+      --status-verified: #28a745;
+      --status-pending: #ffc107;
+      --status-rejected: #dc3545;
+      --status-tampered: #fd7e14;
+      --status-issued: #6c757d; /* Added for 'Issued' status badge */
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .page-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .main-container {
+      flex-grow: 1;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-item i {
+      font-size: 24px;
+      margin-right: 20px;
+      color: var(--accent-blue);
+      width: 30px;
+      text-align: center;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      min-width: 150px;
+    }
+
+    .detail-value {
+      font-size: 18px;
+      color: var(--text-light);
+      word-break: break-all;
+      flex-grow: 1;
+    }
+
+    .token-display {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 16px;
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .status-badge.verified { background-color: var(--status-verified); color: var(--text-light); }
+    .status-badge.pending { background-color: var(--status-pending); color: var(--text-dark); }
+    .status-badge.rejected { background-color: var(--status-rejected); color: var(--text-light); }
+    .status-badge.tampered { background-color: var(--status-tampered); color: var(--text-light); }
+    .status-badge.issued { background-color: var(--status-issued); color: var(--text-light); } /* Added for 'Issued' status badge */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 25px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+      text-decoration: none;
+      margin-top: 30px;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+    .btn.btn-back {
+        background-color: #6c757d;
+    }
+    .btn.btn-back:hover {
+        background-color: #5a6268;
+    }
+    .btn.btn-download {
+        background-color: #28a745;
+    }
+    .btn.btn-download:hover {
+        background-color: #218838;
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success { background-color: #d4edda; color: #155724; }
+    .flash-messages li.error { background-color: #f8d7da; color: #721c24; }
+    .flash-messages li.info { background-color: #d1ecf1; color: #0c5460; }
+    .flash-messages li.warning { background-color: #fff3cd; color: #664d03; }
+
+
+    @media (max-width: 768px) {
+      nav { padding: 15px 20px; }
+      .nav-links a { margin-left: 15px; font-size: 15px; }
+      .page-header { padding: 40px 15px 25px; }
+      .page-header h1 { font-size: 36px; }
+      .page-header p { font-size: 17px; }
+      .main-container { padding: 0 15px; }
+      .card { padding: 30px; }
+      .card h3 { font-size: 22px; }
+      .card h3 i { font-size: 26px; }
+      .detail-label { min-width: 100px; font-size: 16px; }
+      .detail-value { font-size: 16px; }
+      .token-display { font-size: 14px; }
+      .status-badge { font-size: 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo { font-size: 20px; }
+      .nav-links { display: none; }
+      .page-header h1 { font-size: 30px; }
+      .page-header p { font-size: 15px; }
+      .card { padding: 25px; }
+      .card h3 { font-size: 20px; }
+      .card h3 i { font-size: 24px; }
+      .detail-item { flex-direction: column; align-items: flex-start; }
+      .detail-item i { margin-right: 0; margin-bottom: 10px; }
+      .detail-label { min-width: auto; margin-bottom: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      {# Active link based on user's role #}
+      {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_issue_document') }}">Issue Document</a>
+        <a href="{{ url_for('admin_view_documents') }}" class="active">View Documents</a> {# Set active here for consistency #}
+        <a href="{{ url_for('admin_manage_users') }}">Manage Users</a>
+        <a href="{{ url_for('admin_settings') }}">Settings</a>
+      {% elif session.get('role') == 'verifier' %}
+        <a href="{{ url_for('verifier_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('verify_token') }}">Verify Document</a>
+        <a href="{{ url_for('verifier_activity_logs') }}">Activity Logs</a>
+      {% elif session.get('role') == 'user' %}
+        <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="page-header">
+    <h1><i class="fas fa-file-invoice"></i> Document Details</h1>
+    <p>Comprehensive information and status for document ID: **{{ document.id }}**</p>
+  </header>
+
+  <main class="main-container">
+    <div class="card">
+      <h3><i class="fas fa-info-circle"></i> Document Information</h3>
+
+      <div class="detail-item">
+        <i class="fas fa-fingerprint"></i>
+        <span class="detail-label">Token:</span>
+        <span class="detail-value token-display">{{ document.token }}</span>
+      </div>
+
+      <div class="detail-item">
+        <i class="fas fa-file-alt"></i>
+        <span class="detail-label">Filename:</span>
+        <span class="detail-value">{{ document.filename }}</span>
+      </div>
+
+      <div class="detail-item">
+        <i class="fas fa-user"></i>
+        <span class="detail-label">Issued For User:</span>
+        <span class="detail-value">{{ document.user_id }}</span>
+      </div>
+
+      <div class="detail-item">
+        <i class="fas fa-clipboard-check"></i>
+        <span class="detail-label">Status:</span>
+        <span class="detail-value">
+          {% if document.status == 'Verified' %}
+            <span class="status-badge verified">{{ document.status }}</span>
+          {% elif document.status == 'Pending' %}
+            <span class="status-badge pending">{{ document.status }}</span>
+          {% elif document.status == 'Rejected' %}
+            <span class="status-badge rejected">{{ document.status }}</span>
+          {% elif document.status == 'Tampered' %}
+            <span class="status-badge tampered">{{ document.status }}</span>
+          {% elif document.status == 'Issued' %} {# Added for 'Issued' status #}
+            <span class="status-badge issued">{{ document.status }}</span>
+          {% else %}
+            <span class="status-badge">{{ document.status }}</span>
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="detail-label">Issued At:</span>
+        <span class="detail-value">{{ document.timestamp_str }}</span>
+      </div>
+
+      {# Blockchain Transaction ID and link #}
+      {% if document.blockchain_tx_id %}
+      <div class="detail-item">
+        <i class="fab fa-ethereum"></i>
+        <span class="detail-label">Blockchain TX ID:</span>
+        <span class="detail-value">
+            <a href="{{ document.blockchain_explorer_url }}" target="_blank" style="color: var(--accent-blue); text-decoration: none; word-break: break-all;">
+                {{ document.blockchain_tx_id }} <i class="fas fa-external-link-alt"></i>
+            </a>
+        </span>
+      </div>
+      <div class="detail-item">
+        <i class="fas fa-clock"></i>
+        <span class="detail-label">Blockchain Timestamp:</span>
+        <span class="detail-value">{{ document.blockchain_timestamp_on_chain_str }}</span>
+      </div>
+      {% endif %}
+
+
+      <div style="text-align: center; margin-top: 20px;">
+        {# Only allow download if status is verified or issued (if issued implies verified) #}
+        {% if document.status == 'Verified' or document.status == 'Issued' %}
+        <a href="{{ url_for('download_document', filename=document.filename) }}" class="btn btn-download">
+          <i class="fas fa-download"></i> Download Original File
+        </a>
+        {% else %}
+        <button class="btn btn-download" disabled style="opacity: 0.6; cursor: not-allowed;">
+            <i class="fas fa-download"></i> Download (Not {{ document.status }} )
+        </button>
+        {% endif %}
+        
+        {# Dynamic back button based on referer or role #}
+        {% if request.referrer %}
+        <a href="{{ request.referrer }}" class="btn btn-back" style="margin-left: 15px;"><i class="fas fa-arrow-left"></i> Go Back</a>
+        {% else %}
+        <a href="{{ url_for(session.get('role') + '_dashboard') }}" class="btn btn-back" style="margin-left: 15px;"><i class="fas fa-arrow-left"></i> Go to Dashboard</a>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

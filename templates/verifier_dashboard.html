@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifier Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      /* Consistent Color Palette */
+      --primary-blue: #2c3e50; /* Darker blue for background */
+      --secondary-blue: #34495e; /* Slightly lighter dark blue for cards */
+      --accent-blue: #3498db; /* A vibrant blue for accents */
+      --text-light: #ecf0f1; /* Light text for dark backgrounds */
+      --text-dark: #2c3e50; /* Dark text for light elements */
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+
+      /* Status Colors */
+      --status-verified: #28a745;   /* Green */
+      --status-pending: #ffc107;    /* Orange */
+      --status-rejected: #dc3545;   /* Red */
+      --status-tampered: #fd7e14;   /* Orange-Red for tampered */
+      --status-issued: #6c757d;    /* Grey for Issued status (could be green if 'Issued' means pre-verified by Admin) */
+    }
+
+    /* Global Body Styles */
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column; /* Stack nav, header, and main content */
+      overflow-x: hidden; /* Prevent horizontal scroll */
+    }
+
+    /* Navigation Bar */
+    nav {
+      background: rgba(0, 0, 0, 0.3); /* Slightly transparent for depth */
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .dashboard-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    /* Main Content Container */
+    .main-container {
+      flex-grow: 1;
+      max-width: 960px; /* Slightly wider for more content */
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      display: grid;
+      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid for top cards */
+    }
+
+    /* Cards/Sections */
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; grid-column: 1 / -1; } /* Make the table card span full width */
+
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    .card p {
+      font-size: 17px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 25px;
+      background-color: var(--accent-blue);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px var(--shadow-strong);
+      text-decoration: none; /* For anchor buttons */
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px var(--shadow-strong);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px var(--shadow-light);
+    }
+
+    /* Specific button styles for actions */
+    .btn-approve {
+      background-color: var(--status-verified);
+    }
+    .btn-approve:hover {
+      background-color: #218838;
+    }
+    .btn-reject {
+      background-color: var(--status-rejected);
+    }
+    .btn-reject:hover {
+      background-color: #c82333;
+    }
+
+    /* Table Styling */
+    .table-responsive {
+      overflow-x: auto; /* Enable horizontal scrolling on small screens */
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow-strong);
+      background: rgba(255, 255, 255, 0.05); /* Very subtle background for table */
+    }
+
+    th, td {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-light);
+    }
+
+    th {
+      background-color: rgba(25, 45, 65, 0.9);
+      font-weight: 600;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .status-badge.verified {
+      background-color: var(--status-verified);
+      color: var(--text-light);
+    }
+
+    .status-badge.pending {
+      background-color: var(--status-pending);
+      color: var(--text-dark);
+    }
+
+    .status-badge.rejected {
+      background-color: var(--status-rejected);
+      color: var(--text-light);
+    }
+    .status-badge.tampered {
+      background-color: var(--status-tampered);
+      color: var(--text-light);
+    }
+    .status-badge.issued { /* Added style for 'Issued' status */
+      background-color: var(--status-issued);
+      color: var(--text-light);
+    }
+
+
+    /* Activity List Styling */
+    .activity-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+    }
+
+    .activity-list li {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      transition: background-color 0.2s ease;
+    }
+
+    .activity-list li:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .activity-list li strong {
+      color: var(--accent-blue);
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto; /* Center messages */
+        width: 100%;
+        max-width: 700px; /* Constrain width */
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark); /* Default, overridden by specific class */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .flash-messages li.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .flash-messages li.info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .main-container {
+        grid-template-columns: 1fr; /* Stack cards vertically */
+      }
+      .card:nth-child(3) { grid-column: auto; } /* Remove full width span */
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 15px 20px;
+      }
+      .nav-links a {
+        margin-left: 15px;
+        font-size: 15px;
+      }
+      .dashboard-header {
+        padding: 40px 15px 25px;
+      }
+      .dashboard-header h1 {
+        font-size: 36px;
+      }
+      .dashboard-header p {
+        font-size: 17px;
+      }
+      .main-container {
+        padding: 0 15px;
+      }
+      .card {
+        padding: 30px;
+      }
+      .card h3 {
+        font-size: 22px;
+      }
+      .card h3 i {
+        font-size: 26px;
+      }
+      th, td {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      .status-badge {
+        font-size: 13px;
+        padding: 4px 8px;
+      }
+      .btn {
+        padding: 8px 15px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 20px;
+      }
+      .nav-links {
+        display: none; /* Hide nav links on very small screens for simplicity */
+      }
+      .dashboard-header h1 {
+        font-size: 30px;
+      }
+      .dashboard-header p {
+        font-size: 15px;
+      }
+      .card {
+        padding: 25px;
+      }
+      .card h3 {
+        font-size: 20px;
+      }
+      .card h3 i {
+        font-size: 24px;
+      }
+      .btn {
+        display: block; /* Make buttons stack on small screens */
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .btn:last-child {
+        margin-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      <a href="{{ url_for('verifier_dashboard') }}" class="active">Dashboard</a>
+      <a href="{{ url_for('verify_token') }}">Verify Document</a>
+      <a href="{{ url_for('verifier_activity_logs') }}">Activity Logs</a> {# Added direct link for logs #}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="dashboard-header">
+    <h1>Welcome, {{ identifier }}</h1>
+    <p>Your Verifier Dashboard. Quickly access tools for document verification and monitor pending approvals.</p>
+  </header>
+
+  <main class="main-container">
+
+    <div class="card">
+      <h3><i class="fas fa-check-circle"></i> Document Verification</h3>
+      <p>Upload a document and provide its digitoken to instantly check its authenticity against the official records.</p>
+      <a class="btn" href="{{ url_for('verify_token') }}"><i class="fas fa-qrcode"></i> Verify Document Now</a>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-chart-pie"></i> Verification Activity</h3>
+      <ul class="activity-list">
+        <li>Review documents you have <strong style="color: var(--status-verified);">verified</strong> or <strong style="color: var(--status-rejected);">rejected</strong>.</li>
+        <li>Access <strong style="color: var(--accent-blue);">recent login records</strong> for auditing.</li>
+        <li>View documents <strong style="color: var(--status-tampered);">flagged as tampered</strong> by the system.</li>
+        <li>Monitor your overall contribution to document integrity.</li>
+      </ul>
+      <p style="text-align: right; margin-top: 20px;"><a href="{{ url_for('verifier_activity_logs') }}" class="btn" style="background-color: var(--secondary-blue); color: var(--text-light); border: 1px solid var(--border-color);"><i class="fas fa-arrow-right"></i> View Full Activity</a></p>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-hourglass-half"></i> Pending Document Approvals</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Token</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td>{{ doc[1] }}</td> {# filename #}
+              <td>{{ doc[2] }}</td> {# token #}
+              <td>
+                {% if doc[3] == 'Pending' %}
+                  <span class="status-badge pending">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Verified' %}
+                  <span class="status-badge verified">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Rejected' %}
+                  <span class="status-badge rejected">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Tampered' %}
+                  <span class="status-badge tampered">{{ doc[3] }}</span>
+                {% elif doc[3] == 'Issued' %} {# Added 'Issued' status #}
+                  <span class="status-badge issued">{{ doc[3] }}</span>
+                {% else %} {# Fallback for any other unexpected statuses #}
+                  <span class="status-badge">{{ doc[3] }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {# Actions only for 'Pending' documents #}
+                {% if doc[3] == 'Pending' %}
+                <form method="POST" style="display:inline-flex; gap: 10px;">
+                  <input type="hidden" name="document_id" value="{{ doc[0] }}"> {# document ID #}
+                  <button class="btn btn-approve" type="submit" name="action" value="Approve"><i class="fas fa-check"></i> Approve</button>
+                  <button class="btn btn-reject" type="submit" name="action" value="Reject"><i class="fas fa-times"></i> Reject</button>
+                </form>
+                {% else %}
+                  {# Display current status again if no action is pending #}
+                  <span class="status-badge
+                    {% if doc[3] == 'Verified' %}verified
+                    {% elif doc[3] == 'Rejected' %}rejected
+                    {% elif doc[3] == 'Tampered' %}tampered
+                    {% elif doc[3] == 'Issued' %}issued
+                    {% else %}default
+                    {% endif %}">{{ doc[3] }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">No pending documents for approval.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifier Activity Logs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      /* Consistent Color Palette */
+      --primary-blue: #2c3e50; /* Darker blue for background */
+      --secondary-blue: #34495e; /* Slightly lighter dark blue for cards */
+      --accent-blue: #3498db; /* A vibrant blue for accents */
+      --text-light: #ecf0f1; /* Light text for dark backgrounds */
+      --text-dark: #2c3e50; /* Dark text for light elements */
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-light: rgba(0, 0, 0, 0.2);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+
+      /* Status Colors */
+      --status-verified: #28a745;
+      --status-pending: #ffc107;
+      --status-rejected: #dc3545;
+      --status-tampered: #fd7e14;
+      --status-issued: #6c757d; /* Added Issued status color */
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px var(--shadow-strong);
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-decoration: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 17px;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 3px;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-strong);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      text-shadow: 0 3px 6px var(--shadow-strong);
+    }
+
+    .page-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .main-container {
+      flex-grow: 1;
+      max-width: 1000px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--secondary-blue);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px var(--shadow-strong);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      text-align: left;
+      margin-bottom: 30px; /* Space between cards in this layout */
+    }
+
+    .card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 10px;
+    }
+
+    .card h3 i {
+      margin-right: 15px;
+      font-size: 30px;
+      color: var(--accent-blue);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow-strong);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    th, td {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-light);
+    }
+
+    th {
+      background-color: rgba(25, 45, 65, 0.9);
+      font-weight: 600;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .status-badge.verified { background-color: var(--status-verified); color: var(--text-light); }
+    .status-badge.pending { background-color: var(--status-pending); color: var(--text-dark); }
+    .status-badge.rejected { background-color: var(--status-rejected); color: var(--text-light); }
+    .status-badge.tampered { background-color: var(--status-tampered); color: var(--text-light); }
+    .status-badge.issued { background-color: var(--status-issued); color: var(--text-light); } /* Added Issued status style */
+
+    .log-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+    }
+
+    .log-list li {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      transition: background-color 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+    }
+
+    .log-list li:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .log-list li .log-details {
+        flex-grow: 1;
+    }
+    .log-list li .log-time {
+        font-size: 0.9em;
+        opacity: 0.7;
+        margin-left: 15px; /* Space from details */
+    }
+
+    .log-list strong {
+      color: var(--accent-blue);
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin: 20px auto 0 auto;
+        width: 100%;
+        max-width: 900px;
+        text-align: center;
+    }
+    .flash-messages li {
+        padding: 12px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        opacity: 0.95;
+        color: var(--text-dark);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .flash-messages li.success { background-color: #d4edda; color: #155724; }
+    .flash-messages li.error { background-color: #f8d7da; color: #721c24; }
+    .flash-messages li.info { background-color: #d1ecf1; color: #0c5460; }
+
+
+    @media (max-width: 768px) {
+      nav { padding: 15px 20px; }
+      .nav-links a { margin-left: 15px; font-size: 15px; }
+      .page-header { padding: 40px 15px 25px; }
+      .page-header h1 { font-size: 36px; }
+      .page-header p { font-size: 17px; }
+      .main-container { padding: 0 15px; }
+      .card { padding: 30px; }
+      .card h3 { font-size: 22px; }
+      .card h3 i { font-size: 26px; }
+      th, td { padding: 12px 15px; font-size: 14px; }
+      .status-badge { font-size: 13px; padding: 4px 8px; }
+      .log-list li { font-size: 14px; padding: 10px; }
+      .log-list li .log-time { margin-left: 10px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo { font-size: 20px; }
+      .nav-links { display: none; }
+      .page-header h1 { font-size: 30px; }
+      .page-header p { font-size: 15px; }
+      .card { padding: 25px; }
+      .card h3 { font-size: 20px; }
+      .card h3 i { font-size: 24px; }
+      .log-list li { flex-direction: column; align-items: flex-start; }
+      .log-list li .log-time { margin-left: 0; margin-top: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">E-Portal</div>
+    <div class="nav-links">
+      <a href="{{ url_for('verifier_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('verify_token') }}">Verify Document</a>
+      <a href="{{ url_for('verifier_activity_logs') }}" class="active">Activity Logs</a> {# Corrected active class #}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <ul class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+  </ul>
+
+  <header class="page-header">
+    <h1><i class="fas fa-list-alt"></i> Verifier Activity Logs</h1>
+    <p>Detailed logs of verification actions and verifier login activity.</p>
+  </header>
+
+  <main class="main-container">
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Recent Verification Activities</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Filename</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+              <th>Blockchain TX ID</th> {# Added column for Blockchain TX ID #}
+            </tr>
+          </thead>
+          <tbody>
+            {% for verification in recent_verifications %}
+            <tr>
+              <td>{{ verification[0] }}</td> {# user_id #}
+              <td>{{ verification[1] }}</td> {# filename #}
+              <td>
+                {% if verification[3] == 'Verified' %}
+                  <span class="status-badge verified">{{ verification[3] }}</span>
+                {% elif verification[3] == 'Rejected' %}
+                  <span class="status-badge rejected">{{ verification[3] }}</span>
+                {% elif verification[3] == 'Tampered' %}
+                  <span class="status-badge tampered">{{ verification[3] }}</span>
+                {% elif verification[3] == 'Issued' %} {# Added 'Issued' status #}
+                  <span class="status-badge issued">{{ verification[3] }}</span>
+                {% elif verification[3] == 'Pending' %} {# Added 'Pending' status #}
+                  <span class="status-badge pending">{{ verification[3] }}</span>
+                {% else %}
+                  <span class="status-badge">{{ verification[3] }}</span>
+                {% endif %}
+              </td>
+              <td>{{ verification[4] }}</td> {# timestamp #}
+              <td>
+                {% if verification[5] %} {# blockchain_tx_id #}
+                    <a href="https://sepolia.etherscan.io/tx/{{ verification[5] }}" target="_blank" style="color: var(--accent-blue); text-decoration: none;">
+                        {{ verification[5][:8] }}...<i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 5px;"></i>
+                    </a>
+                {% else %}
+                    N/A
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">No recent verification activities.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-sign-in-alt"></i> Verifier Login History</h3>
+      <ul class="log-list">
+        {% for login in verifier_logins %}
+          <li>
+            <span class="log-details"><strong>{{ login[0] }}</strong> logged in</span>
+            <span class="log-time">{{ login[1] }}</span>
+          </li>
+        {% else %}
+        <li>No recent verifier login history.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </main>
+
+</body>
+</html>
